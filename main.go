@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"log"
+	"os"
 
 	"github.com/spf13/pflag"
 )
@@ -11,7 +13,10 @@ func main() {
 	pflag.Parse()
 	model, err := NewModel(*storagePath)
 	if err != nil {
-		log.Fatalln(err)
+		if !errors.Is(err, os.ErrNotExist) {
+			log.Fatalln(err)
+		}
+		model = NewEmptyModel()
 	}
 	log.Println(model)
 }

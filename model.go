@@ -10,6 +10,12 @@ type Model struct {
 	data map[user]userData
 }
 
+func NewEmptyModel() *Model {
+	return &Model{
+		data: map[user]userData{},
+	}
+}
+
 func NewModel(path string) (*Model, error) {
 	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
