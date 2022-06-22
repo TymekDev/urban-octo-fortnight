@@ -1,6 +1,23 @@
 package main
 
+import (
+	"encoding/json"
+	"io/ioutil"
+)
+
 type Model map[User]UserData
+
+func NewModel(path string) (*Model, error) {
+	bytes, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var m Model
+	if err := json.Unmarshal(bytes, &m); err != nil {
+		return nil, err
+	}
+	return &m, nil
+}
 
 type User string
 
