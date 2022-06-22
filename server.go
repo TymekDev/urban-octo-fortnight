@@ -10,15 +10,15 @@ import (
 )
 
 type Server struct {
-	router  *mux.Router
-	storage Game
+	router *mux.Router
+	game   Game
 }
 
 var _ http.Handler = (*Server)(nil)
 
-func NewServer(storage Game) *Server {
+func NewServer(game Game) *Server {
 	s := &Server{
-		storage: storage,
+		game: game,
 	}
 	r := mux.NewRouter()
 	r.Methods("POST").Path("/user").HandlerFunc(s.userPOSTHandler)
@@ -48,7 +48,7 @@ func (s *Server) userPOSTHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	if err := s.storage.NewUser(payload.Username); err != nil {
+	if err := s.game.NewUser(payload.Username); err != nil {
 		log.Println(err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -79,7 +79,7 @@ func (s *Server) dashboardGETHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	userData, err := s.storage.GetUserData(payload.Username)
+	userData, err := s.game.GetUserData(payload.Username)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "", http.StatusBadRequest)
