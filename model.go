@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"sync"
 )
 
 type Model struct {
+	sync.Mutex
 	data map[user]userData
 	path string
 }
@@ -36,6 +38,20 @@ func (m *Model) NewUser(username string) error {
 		return errors.New("user already exists")
 	}
 	m.data[user] = newUserData()
+	m.save() // FIXME: ideally this shouldn't be synchronous
+	return nil
+}
+
+func (m *Model) save() error {
+	m.Lock()
+	defer m.Unlock()
+	bytes, err := json.Marshal(m.data)
+	if err != nil {
+		return err
+	}
+	if err := ioutil.WriteFile(m.path, bytes, 0644); err != nil {
+		return err
+	}
 	return nil
 }
 
