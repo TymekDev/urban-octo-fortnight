@@ -13,6 +13,8 @@ type Model struct {
 	path string
 }
 
+var _ Storage = (*Model)(nil)
+
 func NewEmptyModel(path string) *Model {
 	return &Model{
 		data: map[user]userData{},
