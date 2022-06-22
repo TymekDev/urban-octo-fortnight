@@ -31,6 +31,9 @@ func NewModel(path string) (*Model, error) {
 	if err := json.Unmarshal(bytes, &m.data); err != nil {
 		return nil, err
 	}
+	for _, userData := range m.data {
+		go userData.Run()
+	}
 	return m, nil
 }
 
@@ -41,6 +44,7 @@ func (m *Model) NewUser(username string) error {
 	}
 	m.data[user] = newUserData()
 	m.save() // FIXME: ideally this shouldn't be synchronous
+	m.data[user].Run()
 	return nil
 }
 
@@ -64,6 +68,39 @@ func newUser(username string) user {
 }
 
 type userData struct {
+	Factories factories
+	Resources *struct {
+		Iron   int
+		Copper int
+		Gold   int
+	}
+}
+
+func (ud *userData) Run() {
+	copper := make(chan int)
+	iron := make(chan int)
+	gold := make(chan int)
+	go ud.Factories.Copper.Run(copper)
+	go ud.Factories.Iron.Run(iron)
+	go ud.Factories.Gold.Run(gold)
+	go func() {
+		for {
+			ud.Resources.Copper += <-copper
+		}
+	}()
+	go func() {
+		for {
+			ud.Resources.Iron += <-iron
+		}
+	}()
+	go func() {
+		for {
+			ud.Resources.Gold += <-gold
+		}
+	}()
+}
+
+type factories struct {
 	Iron   *factory
 	Copper *factory
 	Gold   *factory
@@ -71,8 +108,10 @@ type userData struct {
 
 func newUserData() *userData {
 	return &userData{
-		Iron:   newFactory(iron),
-		Copper: newFactory(copper),
-		Gold:   newFactory(gold),
+		Factories: factories{
+			Iron:   newFactory(iron),
+			Copper: newFactory(copper),
+			Gold:   newFactory(gold),
+		},
 	}
 }

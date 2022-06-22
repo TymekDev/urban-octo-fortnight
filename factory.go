@@ -27,6 +27,12 @@ func newFactory(facType factoryType) *factory {
 	}
 }
 
+func (f *factory) Run(c chan int) {
+	for range time.Tick(f.Meta.YieldInterval) {
+		c <- f.Meta.Yield
+	}
+}
+
 func (f *factory) UnmarshalJSON(data []byte) error {
 	var f2 struct {
 		Level int
