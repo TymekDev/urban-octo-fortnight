@@ -8,11 +8,13 @@ import (
 
 type Model struct {
 	data map[user]userData
+	path string
 }
 
-func NewEmptyModel() *Model {
+func NewEmptyModel(path string) *Model {
 	return &Model{
 		data: map[user]userData{},
+		path: path,
 	}
 }
 
@@ -21,11 +23,11 @@ func NewModel(path string) (*Model, error) {
 	if err != nil {
 		return nil, err
 	}
-	var m Model
-	if err := json.Unmarshal(bytes, &m); err != nil {
+	m := NewEmptyModel(path)
+	if err := json.Unmarshal(bytes, &m.data); err != nil {
 		return nil, err
 	}
-	return &m, nil
+	return m, nil
 }
 
 func (m *Model) NewUser(username string) error {

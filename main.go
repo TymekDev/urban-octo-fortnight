@@ -16,7 +16,7 @@ func main() {
 		if !errors.Is(err, os.ErrNotExist) {
 			log.Fatalln(err)
 		}
-		model = NewEmptyModel()
+		model = NewEmptyModel(*storagePath)
 	}
 	log.Println(model)
 }
