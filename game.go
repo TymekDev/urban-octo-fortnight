@@ -5,6 +5,7 @@ import "time"
 type Game interface {
 	NewUser(username string) error
 	GetUserData(username string) (UserData, error)
+	UpgradeFactory(username string, factoryType FactoryType) error
 }
 
 type UserData interface {

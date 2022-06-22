@@ -34,11 +34,20 @@ func (f *factory) ToFactory() Factory {
 		UpgradeInProgress: f.UpgradeInProgress,
 	}
 	if f.UpgradeInProgress {
-		// TODO: result.UpgradeTimeLeft =
+		result.UpgradeTimeLeft = f.UpgradeEndTime.Sub(time.Now())
 	} else {
 		result.UpgradeCost = f.Meta.UpgradeCost
 	}
 	return result
+}
+
+func (f *factory) Upgrade() {
+	f.UpgradeInProgress = true
+	f.UpgradeEndTime = time.Now().Add(f.Meta.UpgradeTime)
+	time.Sleep(f.Meta.UpgradeTime) // FIXME: sleep seems to be an anti-pattern
+	f.Level++
+	f.UpgradeInProgress = false
+	f.Meta = _factoryMeta[f.Type][f.Level]
 }
 
 func (f *factory) UnmarshalJSON(data []byte) error {

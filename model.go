@@ -57,6 +57,16 @@ func (m *Model) GetUserData(username string) (UserData, error) {
 	return userData, nil
 }
 
+func (m *Model) UpgradeFactory(username string, factoryType FactoryType) error {
+	// TODO: remove duplication without extending UserData interface with UpgradeFactory method
+	user := newUser(username)
+	userData, ok := m.data[user]
+	if !ok {
+		return errors.New("user does not exist")
+	}
+	return userData.UpgradeFactory(factoryType)
+}
+
 func (m *Model) save() error {
 	m.Lock()
 	defer m.Unlock()
@@ -117,6 +127,26 @@ func (ud *userData) Run() {
 			ud.UserResources.Gold += <-gold
 		}
 	}()
+}
+
+func (ud *userData) UpgradeFactory(factoryType FactoryType) error {
+	var f *factory
+	switch factoryType {
+	case Iron:
+		f = ud.UserFactories.Iron
+	case Copper:
+		f = ud.UserFactories.Copper
+	case Gold:
+		f = ud.UserFactories.Gold
+	default:
+		return errors.New("unknown factory type")
+	}
+	cost := f.Meta.UpgradeCost
+	if cost.Iron > ud.UserResources.Iron || cost.Copper > ud.UserResources.Copper || cost.Gold > ud.UserResources.Gold {
+		return errors.New("insufficient resources")
+	}
+	go f.Upgrade()
+	return nil
 }
 
 type factories struct {
