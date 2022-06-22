@@ -48,6 +48,15 @@ func (m *Model) NewUser(username string) error {
 	return nil
 }
 
+func (m *Model) GetUserData(username string) (UserData, error) {
+	user := newUser(username)
+	userData, ok := m.data[user]
+	if !ok {
+		return nil, errors.New("user does not exist")
+	}
+	return userData, nil
+}
+
 func (m *Model) save() error {
 	m.Lock()
 	defer m.Unlock()
@@ -68,34 +77,40 @@ func newUser(username string) user {
 }
 
 type userData struct {
-	Factories factories
-	Resources *struct {
-		Iron   int
-		Copper int
-		Gold   int
-	}
+	UserFactories factories
+	UserResources *Resources
+}
+
+var _ UserData = (*userData)(nil)
+
+func (ud *userData) Resources() Resources {
+	return Resources{}
+}
+
+func (ud *userData) Factories() Factories {
+	return Factories{}
 }
 
 func (ud *userData) Run() {
 	copper := make(chan int)
 	iron := make(chan int)
 	gold := make(chan int)
-	go ud.Factories.Copper.Run(copper)
-	go ud.Factories.Iron.Run(iron)
-	go ud.Factories.Gold.Run(gold)
+	go ud.UserFactories.Copper.Run(copper)
+	go ud.UserFactories.Iron.Run(iron)
+	go ud.UserFactories.Gold.Run(gold)
 	go func() {
 		for {
-			ud.Resources.Copper += <-copper
+			ud.UserResources.Copper += <-copper
 		}
 	}()
 	go func() {
 		for {
-			ud.Resources.Iron += <-iron
+			ud.UserResources.Iron += <-iron
 		}
 	}()
 	go func() {
 		for {
-			ud.Resources.Gold += <-gold
+			ud.UserResources.Gold += <-gold
 		}
 	}()
 }
@@ -108,7 +123,7 @@ type factories struct {
 
 func newUserData() *userData {
 	return &userData{
-		Factories: factories{
+		UserFactories: factories{
 			Iron:   newFactory(iron),
 			Copper: newFactory(copper),
 			Gold:   newFactory(gold),
