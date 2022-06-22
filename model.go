@@ -128,9 +128,9 @@ type factories struct {
 func newUserData() *userData {
 	return &userData{
 		UserFactories: factories{
-			Iron:   newFactory(iron),
-			Copper: newFactory(copper),
-			Gold:   newFactory(gold),
+			Iron:   newFactory(Iron),
+			Copper: newFactory(Copper),
+			Gold:   newFactory(Gold),
 		},
 		UserResources: &Resources{},
 	}

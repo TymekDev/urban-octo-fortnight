@@ -32,3 +32,11 @@ type Factory struct {
 	UpgradeTimeLeft   time.Duration
 	UpgradeCost       Resources
 }
+
+type FactoryType int
+
+const (
+	Iron FactoryType = iota + 1
+	Copper
+	Gold
+)

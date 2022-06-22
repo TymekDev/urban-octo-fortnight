@@ -5,23 +5,15 @@ import (
 	"time"
 )
 
-type factoryType int
-
-const (
-	iron = iota + 1
-	copper
-	gold
-)
-
 type factory struct {
 	Level             int
-	Type              factoryType
+	Type              FactoryType
 	UpgradeInProgress bool
 	UpgradeEndTime    time.Time
 	Meta              *factoryMeta `json:"-"`
 }
 
-func newFactory(facType factoryType) *factory {
+func newFactory(facType FactoryType) *factory {
 	return &factory{
 		Level: 1,
 		Type:  facType,
@@ -52,7 +44,7 @@ func (f *factory) ToFactory() Factory {
 func (f *factory) UnmarshalJSON(data []byte) error {
 	var f2 struct {
 		Level int
-		Type  factoryType
+		Type  FactoryType
 	}
 	if err := json.Unmarshal(data, &f2); err != nil {
 		return err
@@ -71,22 +63,22 @@ type factoryMeta struct {
 	UpgradeCost   Resources
 }
 
-var _factoryMeta = map[factoryType]map[int]*factoryMeta{
-	iron: {
+var _factoryMeta = map[FactoryType]map[int]*factoryMeta{
+	Iron: {
 		1: {10, time.Second, true, 15 * time.Second, Resources{300, 100, 1}},
 		2: {20, time.Second, true, 30 * time.Second, Resources{800, 250, 2}},
 		3: {40, time.Second, true, 60 * time.Second, Resources{1600, 500, 4}},
 		4: {80, time.Second, true, 90 * time.Second, Resources{3000, 1000, 8}},
 		5: {150, time.Second, false, 120 * time.Second, Resources{}},
 	},
-	copper: {
+	Copper: {
 		1: {3, time.Second, true, 15 * time.Second, Resources{200, 70, 0}},
 		2: {7, time.Second, true, 30 * time.Second, Resources{400, 150, 0}},
 		3: {14, time.Second, true, 60 * time.Second, Resources{800, 300, 0}},
 		4: {30, time.Second, true, 90 * time.Second, Resources{1600, 600, 0}},
 		5: {60, time.Second, false, 120 * time.Second, Resources{}},
 	},
-	gold: {
+	Gold: {
 		1: {2, time.Minute, true, 15 * time.Second, Resources{0, 100, 2}},
 		2: {3, time.Minute, true, 30 * time.Second, Resources{0, 200, 4}},
 		3: {4, time.Minute, true, 60 * time.Second, Resources{0, 400, 8}},
