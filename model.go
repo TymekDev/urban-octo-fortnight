@@ -2,10 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 )
 
-type Model map[user]userData
+type Model struct {
+	data map[user]userData
+}
 
 func NewModel(path string) (*Model, error) {
 	bytes, err := ioutil.ReadFile(path)
@@ -17,6 +20,15 @@ func NewModel(path string) (*Model, error) {
 		return nil, err
 	}
 	return &m, nil
+}
+
+func (m *Model) NewUser(username string) error {
+	user := newUser(username)
+	if _, ok := m.data[user]; ok {
+		return errors.New("user already exists")
+	}
+	m.data[user] = newUserData()
+	return nil
 }
 
 type user string
