@@ -132,5 +132,6 @@ func newUserData() *userData {
 			Copper: newFactory(copper),
 			Gold:   newFactory(gold),
 		},
+		UserResources: &Resources{},
 	}
 }
