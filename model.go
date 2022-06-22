@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 )
 
-type Model map[User]UserData
+type Model map[user]userData
 
 func NewModel(path string) (*Model, error) {
 	bytes, err := ioutil.ReadFile(path)
@@ -19,32 +19,32 @@ func NewModel(path string) (*Model, error) {
 	return &m, nil
 }
 
-type User string
+type user string
 
-func NewUser(username string) User {
-	return User(username)
+func newUser(username string) user {
+	return user(username)
 }
 
-type UserData struct {
-	Iron   Factory
-	Copper Factory
-	Gold   Factory
+type userData struct {
+	Iron   factory
+	Copper factory
+	Gold   factory
 }
 
-func NewUserData() UserData {
-	return UserData{
-		Iron:   NewFactory(),
-		Copper: NewFactory(),
-		Gold:   NewFactory(),
+func newUserData() userData {
+	return userData{
+		Iron:   newFactory(),
+		Copper: newFactory(),
+		Gold:   newFactory(),
 	}
 }
 
-type Factory struct {
+type factory struct {
 	Level int
 }
 
-func NewFactory() Factory {
-	return Factory{
+func newFactory() factory {
+	return factory{
 		Level: 1,
 	}
 }
