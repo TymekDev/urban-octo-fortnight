@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -124,9 +125,12 @@ func (s *Server) upgradePOSTHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := s.game.UpgradeFactory(payload.Username, factoryType); err != nil {
+		if errors.Is(err, ErrInsufficientResources) {
+			http.Error(w, err.Error(), http.StatusForbidden)
+			return
+		}
 		log.Println(err)
-		// TODO: this could be improved because it is either missing resources or nonexistent user
-		http.Error(w, "", http.StatusBadRequest)
+		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 }

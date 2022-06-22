@@ -129,6 +129,8 @@ func (ud *userData) Run() {
 	}()
 }
 
+var ErrInsufficientResources = errors.New("insufficient resources")
+
 func (ud *userData) UpgradeFactory(factoryType FactoryType) error {
 	var f *factory
 	switch factoryType {
@@ -143,7 +145,7 @@ func (ud *userData) UpgradeFactory(factoryType FactoryType) error {
 	}
 	cost := f.Meta.UpgradeCost
 	if cost.Iron > ud.UserResources.Iron || cost.Copper > ud.UserResources.Copper || cost.Gold > ud.UserResources.Gold {
-		return errors.New("insufficient resources")
+		return ErrInsufficientResources
 	}
 	go f.Upgrade()
 	return nil
