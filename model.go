@@ -71,18 +71,8 @@ type userData struct {
 
 func newUserData() *userData {
 	return &userData{
-		Iron:   newFactory(),
-		Copper: newFactory(),
-		Gold:   newFactory(),
-	}
-}
-
-type factory struct {
-	Level int
-}
-
-func newFactory() *factory {
-	return &factory{
-		Level: 1,
+		Iron:   newFactory(iron),
+		Copper: newFactory(copper),
+		Gold:   newFactory(gold),
 	}
 }
