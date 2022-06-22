@@ -23,7 +23,7 @@ func newFactory(facType factoryType) *factory {
 	return &factory{
 		Level: 1,
 		Type:  facType,
-		Meta:  _factoryMeta[facType][0],
+		Meta:  _factoryMeta[facType][1],
 	}
 }
 
