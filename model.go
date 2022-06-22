@@ -44,7 +44,7 @@ func (m *Model) NewUser(username string) error {
 	}
 	m.data[user] = newUserData()
 	m.save() // FIXME: ideally this shouldn't be synchronous
-	m.data[user].Run()
+	go m.data[user].Run()
 	return nil
 }
 
