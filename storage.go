@@ -29,6 +29,6 @@ type Factory struct {
 	Level             int
 	Yield             int
 	UpgradeInProgress bool
-	UpgradeTime       time.Duration
+	UpgradeTimeLeft   time.Duration
 	UpgradeCost       Resources
 }

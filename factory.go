@@ -14,9 +14,11 @@ const (
 )
 
 type factory struct {
-	Level int
-	Type  factoryType
-	Meta  *factoryMeta `json:"-"`
+	Level             int
+	Type              factoryType
+	UpgradeInProgress bool
+	UpgradeEndTime    time.Time
+	Meta              *factoryMeta `json:"-"`
 }
 
 func newFactory(facType factoryType) *factory {
@@ -31,6 +33,20 @@ func (f *factory) Run(c chan int) {
 	for range time.Tick(f.Meta.YieldInterval) {
 		c <- f.Meta.Yield
 	}
+}
+
+func (f *factory) ToFactory() Factory {
+	result := Factory{
+		Level:             f.Level,
+		Yield:             f.Meta.Yield,
+		UpgradeInProgress: f.UpgradeInProgress,
+	}
+	if f.UpgradeInProgress {
+		// TODO: result.UpgradeTimeLeft =
+	} else {
+		result.UpgradeCost = f.Meta.UpgradeCost
+	}
+	return result
 }
 
 func (f *factory) UnmarshalJSON(data []byte) error {

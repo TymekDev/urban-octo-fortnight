@@ -84,11 +84,15 @@ type userData struct {
 var _ UserData = (*userData)(nil)
 
 func (ud *userData) Resources() Resources {
-	return Resources{}
+	return *ud.UserResources
 }
 
 func (ud *userData) Factories() Factories {
-	return Factories{}
+	return Factories{
+		Iron:   ud.UserFactories.Iron.ToFactory(),
+		Copper: ud.UserFactories.Copper.ToFactory(),
+		Gold:   ud.UserFactories.Gold.ToFactory(),
+	}
 }
 
 func (ud *userData) Run() {
