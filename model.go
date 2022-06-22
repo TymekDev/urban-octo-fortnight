@@ -9,7 +9,7 @@ import (
 
 type Model struct {
 	sync.Mutex
-	data map[user]userData
+	data map[user]*userData
 	path string
 }
 
@@ -17,7 +17,7 @@ var _ Storage = (*Model)(nil)
 
 func NewEmptyModel(path string) *Model {
 	return &Model{
-		data: map[user]userData{},
+		data: map[user]*userData{},
 		path: path,
 	}
 }
@@ -64,13 +64,13 @@ func newUser(username string) user {
 }
 
 type userData struct {
-	Iron   factory
-	Copper factory
-	Gold   factory
+	Iron   *factory
+	Copper *factory
+	Gold   *factory
 }
 
-func newUserData() userData {
-	return userData{
+func newUserData() *userData {
+	return &userData{
 		Iron:   newFactory(),
 		Copper: newFactory(),
 		Gold:   newFactory(),
@@ -81,8 +81,8 @@ type factory struct {
 	Level int
 }
 
-func newFactory() factory {
-	return factory{
+func newFactory() *factory {
+	return &factory{
 		Level: 1,
 	}
 }
