@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type Game interface {
 	NewUser(username string) error
@@ -41,3 +44,15 @@ const (
 	Copper
 	Gold
 )
+
+func FactoryTypeFromString(s string) (FactoryType, error) {
+	switch s {
+	case "iron":
+		return Iron, nil
+	case "copper":
+		return Copper, nil
+	case "gold":
+		return Gold, nil
+	}
+	return 0, errors.New("unknown factory type")
+}
