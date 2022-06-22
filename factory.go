@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type factoryType int
 
@@ -13,13 +16,29 @@ const (
 type factory struct {
 	Level int
 	Type  factoryType
+	Meta  *factoryMeta `json:"-"`
 }
 
 func newFactory(facType factoryType) *factory {
 	return &factory{
 		Level: 1,
 		Type:  facType,
+		Meta:  _factoryMeta[facType][0],
 	}
+}
+
+func (f *factory) UnmarshalJSON(data []byte) error {
+	var f2 struct {
+		Level int
+		Type  factoryType
+	}
+	if err := json.Unmarshal(data, &f2); err != nil {
+		return err
+	}
+	f.Level = f2.Level
+	f.Type = f2.Type
+	f.Meta = _factoryMeta[f2.Type][f2.Level]
+	return nil
 }
 
 type factoryMeta struct {
@@ -35,7 +54,7 @@ type upgradeCost struct {
 	Gold   int
 }
 
-var _factoryMeta = map[factoryType]map[int]factoryMeta{
+var _factoryMeta = map[factoryType]map[int]*factoryMeta{
 	iron: {
 		1: {10 * time.Second, true, 15 * time.Second, upgradeCost{300, 100, 1}},
 		2: {20 * time.Second, true, 30 * time.Second, upgradeCost{800, 250, 2}},
