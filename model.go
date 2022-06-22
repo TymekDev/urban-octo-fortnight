@@ -13,7 +13,7 @@ type Model struct {
 	path string
 }
 
-var _ Storage = (*Model)(nil)
+var _ Game = (*Model)(nil)
 
 func NewEmptyModel(path string) *Model {
 	return &Model{

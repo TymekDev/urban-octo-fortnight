@@ -11,12 +11,12 @@ import (
 
 type Server struct {
 	router  *mux.Router
-	storage Storage
+	storage Game
 }
 
 var _ http.Handler = (*Server)(nil)
 
-func NewServer(storage Storage) *Server {
+func NewServer(storage Game) *Server {
 	s := &Server{
 		storage: storage,
 	}

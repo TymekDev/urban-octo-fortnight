@@ -2,7 +2,7 @@ package main
 
 import "time"
 
-type Storage interface {
+type Game interface {
 	NewUser(username string) error
 	GetUserData(username string) (UserData, error)
 }
